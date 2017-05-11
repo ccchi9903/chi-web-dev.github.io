@@ -2,10 +2,16 @@
 	margin: 0px;
 	padding: 0px;
 }
-#header h1{
+h1{
+	font:bold 20px sans-serif;
+}
+p{
+	font: 20px Tahoma;
+}
+#top_header h1{
 	font:bold 40px Tahoma;
 }
-#header h2{
+#top_header h2{
 	font:bold 20px Tahoma;
 }
 header,section,footer,aside,nav,hgroup,article{
@@ -13,6 +19,11 @@ header,section,footer,aside,nav,hgroup,article{
 }
 body{
 	text-align: center;
+	background-image: url("wall2.jpeg");
+			background-repeat: no-repeat;
+		background-position: 50% 50%;
+		background-size: cover;
+		color: white;
 }
 ul{
 	list-style: none;
@@ -22,14 +33,15 @@ ul{
 	width:1000px;
 	margin: 20px auto;
 	text-align: left;
-}
+	}
 #top_header{
-	background-color: yellow;
+	color: black;
+	background-color: white;
 	border: blue solid 1px;
 	padding: 20px
 }
 #navbar{
-	background-color: blue;
+	background-color: black;
 	color: white;
 }
 #navbar li{
@@ -61,6 +73,7 @@ ul{
 	text-align: center;
 	padding: 20px;
 	border-top: 2px solid green;
+	color: white;
 }
 article{
 	background: FFFBCC;
