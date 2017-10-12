@@ -6,13 +6,14 @@ h1{
 	font:bold 20px sans-serif;
 }
 p{
-	font: 20px Tahoma;
+	font: 20px comic;
+	text-indent: 30px;
 }
 #top_header h1{
-	font:bold 40px Tahoma;
+	font:bold 40px times;
 }
 #top_header h2{
-	font:bold 20px Tahoma;
+	font: 20px times;
 }
 header,section,footer,aside,nav,hgroup,article{
 	display: block;
@@ -20,53 +21,68 @@ header,section,footer,aside,nav,hgroup,article{
 body{
 	text-align: center;
 	background-image: url("wall2.jpeg");
-			background-repeat: no-repeat;
 		background-position: 50% 50%;
+		background-attachment: fixed;
 		background-size: cover;
 		color: white;
 }
-ul{
-	list-style: none;
+#navbar ul{
+	list-style-type: none;
+	overflow: hidden;
 }
 #all{
-	border: 1px solid black;
-	width:1000px;
-	margin: 20px auto;
+	//border: 1px solid black;
+	width: 100%;
+	//margin: 20px auto;
 	text-align: left;
 	}
 #top_header{
 	color: black;
-	background-color: white;
-	border: blue solid 1px;
-	padding: 20px
+	background-color: #dddddd;
+	padding: 10px;
+	text-align: center;
 }
 #navbar{
-	background-color: black;
-	color: white;
+	background-color: #333;
 }
 #navbar li{
 	display:inline-block;
-	padding: 5px;
-	font:bold 40px sans-serif;
+	font: 20px serif;
+	float: left;
 }
+#navbar li a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
 #navbar a{
-	color:white;
+	color: white;
+	text-decoration: none;
+	background-color: #333;
+	padding: 14px 16px;
+	display: block;
+	text-align: center;
 }
 #navbar a:hover{
-	color:black;
-	background-color: grey; 
+	background-color: #111; 
+	color: white;
+}
+#navbar a:active{
+	background-color: #4CAF50; 
 }
 #sect{
 	float:left;
-	width:660px;
-	margin: 30px;
+	display: inline;
+	width: 50%;
+	margin: 0px;
 }
 #side{
-	float: left;
-	width: 220px;
-	margin: 20px 0px;
-	padding: 30px;
+	float: right;
+	width: 500px;
+	margin: 0px 0px;
+	padding: 20px;
 	background:#66cccc;
+	text-align: justify;
 }
 #foot{
 	clear: both;
@@ -76,8 +92,7 @@ ul{
 	color: white;
 }
 article{
-	background: FFFBCC;
-	border: 1px solid red;
+	background-color: gray;
 	padding: 20px;
 	margin-bottom: 15px;
 }
