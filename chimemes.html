@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chimemes</title>
+	<link rel="stylesheet" type="text/css" href="main.css">
+	<style type="text/css">
+		h1{
+			text-align: center;
+			font-size: 60px;
+			font-weight: normal;
+		}
+		#top_header hgroup h1{
+			font-size: 80px;
+			padding-bottom: 10px;
+		}
+		img{
+			width: 100px;
+			height: 100px;
+			padding-bottom: 10px;
+		}
+		#sect article {
+			background-color: dimgrey;
+			text-align: justify;
+		}
+		#sect article footer{
+			font-size: 30px;
+			text-align: center;
+		}
+		#sect p{
+			padding: 50px;
+			font-size: 25px;
+		}
+		form input{
+			width: 300px;
+		}
+		form input.submit{
+			width: 200px;
+			padding: 10px;
+			background-color: lightgreen;
+			border: 2px green solid;
+		}
+		form input.submit:hover{
+			background-color: #4CAF50;
+		}
+		#side{
+			padding: 30px;
+			width: 400px;
+			background-color: #dddddd;
+			color: black;
+			text-align: left;
+		}
+	</style>
+	<script type="text/javascript">
+			function check_info()
+		{
+			var is_valid = false;
+			var name = document.getElementById('yourName').value;
+			var password = document.getElementById('password').value;
+			var email = document.getElementById('email').value;
+			for(var i = 0;i < email.length;i++)
+			{
+				if(email[i] == '@' && i!= email.length-1 && i!=0)
+				{
+					is_valid = true;
+					break;
+				}
+			}
+			if(name == "" || password == "" || email == "")
+			{
+				alert("please fill in all fields");
+				return false;
+			}
+			else if(password.length < 8)
+			{
+				alert("Password must be longer than 8 characters");
+				return false;
+			}
+	
+			else if(is_valid == false)
+			{
+				alert("Email adress is not valid");
+				return false;
+			}
+			else
+				return true;
+		}
+	</script>
+</head>
+<body>
+<div id="all">
+	<header id="top_header">
+		<hgroup>
+			<img align = "left" src="trollface2.png" alt="bruh">
+			<h1>ChiMemes</h1>
+		</hgroup>
+	</header>
+	<nav id="navbar">
+		<ul>
+			<li><a class = "active" href="chimemes.html">Home</a></li>
+			<li><a href="memes.html">Memes</a></li>
+			<li><a href="forum.html">Forum</a></li>
+			<li><a href="about.html">About</a></li>
+			<li><a href="career.html">Career</a></li>
+			<li><a href="tutorials.html">Tutorials</a></li>
+			<li style="float: right"><a  href="signin.html">Sign in</a></li>
+		</ul>
+	</nav>
+	<section id="sect">
+		<article>
+			<header>
+				<h1>Made for memers</h1>
+			</header>
+			<p>Everyone can be a memer, but it's hard. It's our job to make it easier for you. Find thousands of tutorials on meme making,
+			   millions of memes and forums on memes here on Chimemes, as well as share your work with others -- Chimemes provides the perfect 
+			   platform for you to become a professional memer quickly.
+			</p>
+			<footer>
+				Sign up for a free Chimemes account now and jumpstart your meming career!
+			</footer>
+		</article>
+	</section>
+
+	<aside id="side">
+		<form action="submitted.html" method = "GET" onsubmit="return check_info()">
+		Username <br><input type="text" name="yourName" id="yourName">
+		<br />
+		Email <br><input type = "text" name = "email" id = "email">
+		<br>
+		Password <br><input type="password" name="password" id="password">
+	     <br />
+		Use at least one letter, one numeral, and seven characters.<br>
+		<input class = "submit" type="submit" value="Sign up for Chimemes">
+		</form>
+	</aside>
+</div>
+
+</body>
+</html>
