@@ -166,7 +166,7 @@
 		{
 			if(paddle2Y + paddleHeight2/2 > ballY)//if paddle is below ball
 			{
-				if(paddle2Y <= 28)
+				if(paddle2Y <= 33)
 				{
 					//if(ballX >= canvas.width-30)
 					return 0;
@@ -175,7 +175,7 @@
 			}
 			else if(paddle2Y + paddleHeight2/2 < ballY)//if paddle is above ball
 			{
-				if(canvas.height-(paddle2Y+paddleHeight2) <= 28)
+				if(canvas.height-(paddle2Y+paddleHeight2) <= 33)
 				{
 					//if(ballX >= canvas.width-30)
 					return 0;
@@ -242,6 +242,7 @@
 			{
 				return;
 			}
+			myMusic.play();
 			computerMovement();
 			ballX += ballXSpeed;
 			ballY += ballYSpeed;
@@ -254,6 +255,8 @@
 				}
 				else if(ballY >= paddle1Y-3 && ballY <= paddle1Y+paddleHeight+3)
 				{
+					var click = new sound("clicksound.mp3");
+					click.play();
 					ballXSpeed *= -1;
 
 					var deltaY = (ballY-(paddle1Y+paddleHeight/2))/paddleHeight;
@@ -278,8 +281,8 @@
 					ballXSpeed *= -1;
 					var deltaY = ballY-(paddle2Y+paddleHeight2/2);
 					ballYSpeed = deltaY * 0.33;
-					var mysound = new sound("hitmarker.mp3");
-					mysound.play();
+					var click = new sound("clicksound.mp3");
+					click.play();
 				}
 				
 			}
