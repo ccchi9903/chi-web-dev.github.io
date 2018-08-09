@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game</title>
+	<style type="text/css">
+		*{
+			margin:0px;
+			padding: 0px;
+		}
+		h1{
+			text-align: center;
+			background-color: grey;
+			font-size: 48px;
+			color: black;	
+		}
+		body{
+			background-image: url("grey website background.jpg");
+			background-size: cover;
+		}
+		canvas{
+			border: 1px solid red;
+			display: block;
+			padding-left: 0px;
+			padding-right: 0px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+<body onload = "startGame()">
+	<h1>Pong Game</h1>
+	<canvas id="gameCanvas" width="800" height="575"></canvas>
+
+	<script type="text/javascript">
+		var canvas;
+		var canvasContext;
+		var ballX = 50;//x position of center of ball
+		var ballY = 50;//y position of center of ball
+		var ballXSpeed = 10;//speed of ball x
+		var ballYSpeed = 6;//speed of bally
+		var ballRadius = 10;//radius of ball
+		var ballMaxSpeed = 16;
+		var myMusic;
+
+		var atHomeScreen = true;
+
+		var refreshIntervalId;
+
+		var paddle2MaxSpeed = 20;
+		var paddle1Y = 250;//y position or left top corner of paddle
+		var paddle2Y = 250;//left top corner of paddle 2
+		var paddleHeight = 100;//height of left paddle
+		var paddleHeight2 = 100;//height of riht paddle
+		const PADDLE_2_MAX_SPEED = 12;
+		const PADDLE_DIST_FROM_WALL = 30;
+		const PADDLE_WIDTH = 15;//width of both paddles
+
+		const WINNING_SCORE = 5;
+
+		var player1Score = 0;
+		var player2Score = 0;
+
+		function sound(src) {
+		    this.sound = document.createElement("audio");
+		    this.sound.src = src;
+		    this.sound.setAttribute("preload", "auto");
+		    this.sound.setAttribute("controls", "none");
+		    this.sound.style.display = "none";
+		    document.body.appendChild(this.sound);
+		    this.play = function(){
+		        this.sound.play();
+		   	}	
+		    this.stop = function(){
+		    this.sound.pause();
+	   		}
+		}
+		function calculateMousePos(evt)
+		{
+			var rect = canvas.getBoundingClientRect();
+			var mouseX = evt.clientX - rect.left;
+			var mouseY = evt.clientY - rect.top;
+			return{
+				x:mouseX,
+				y:mouseY
+			};
+		}
+		function startGame()
+		{
+			canvas = document.getElementById('gameCanvas');
+			canvasContext = canvas.getContext('2d');
+			var framesPerSecond = 60;
+			myMusic = new sound("gametheme.mp3");
+			mysound = new sound("hitmarker.mp3");
+			ballReset(false);
+			drawHomeScreen();	
+			canvas.addEventListener('mousemove',function(evt){
+				var mousePos = calculateMousePos(evt);
+				paddle1Y = mousePos.y-(paddleHeight/2);
+			})
+			canvas.addEventListener('click',function()
+			{
+				if(atHomeScreen)
+				{
+					atHomeScreen = !atHomeScreen;
+					setInterval(function () {moveEverything();drawEverything();} ,1000/framesPerSecond);	
+				}	
+			})
+
+		}
+		function calculatePaddleSpeed()
+		{
+			var deltaY = ballY-(paddle2Y+paddleHeight2/2);
+			if(deltaY < 0)
+			{
+				deltaY *= -1;
+			}
+			if(deltaY * 0.3> PADDLE_2_MAX_SPEED)
+			{
+				return PADDLE_2_MAX_SPEED;
+			}
+			else
+			{
+				return deltaY * 0.3;
+			}	
+		}
+		function computerMovement()
+		{
+			if(paddle2Y + paddleHeight2/2 > ballY)//if paddle is below ball
+			{
+				paddle2Y-=calculatePaddleSpeed();
+			}
+			else if(paddle2Y + paddleHeight2/2 < ballY)//if paddle is above ball
+			{
+				paddle2Y+=calculatePaddleSpeed();
+			}
+		}
+		function drawHomeScreen()
+		{
+			colorRect(0,0,canvas.width,canvas.height,'black');
+			canvasContext.fillStyle = 'green';
+			canvasContext.font = "80px tahoma";
+			canvasContext.fillText('Welcome to Pong!',80,150);
+			canvasContext.font = "15px Arial";
+			canvasContext.fillText("Click to start",350,500);
+		}
+		function moveEverything()
+		{
+			computerMovement();
+			ballX += ballXSpeed;
+			ballY += ballYSpeed;
+			if(ballX <= ballRadius + PADDLE_WIDTH +PADDLE_DIST_FROM_WALL)//if ball is touching between 																	left paddle and wall
+			{
+				if(ballX <= ballRadius)//ball has passed the paddle
+				{
+					player2Score++;//must be BEFORE ballReset(true)
+					ballReset(false);
+				}
+				else if(ballY >= paddle1Y-3 && ballY <= paddle1Y+paddleHeight+3)
+				{
+					ballXSpeed *= -1;
+
+					var deltaY = (ballY-(paddle1Y+paddleHeight/2))/paddleHeight;
+					ballYSpeed = deltaY * 25;//calculate ball y speed based on how far the ball is from the center of the 							paddle in proportion to the length of the paddle
+					var mysound = new sound("hitmarker.mp3");
+					mysound.play();
+				}
+				
+			}
+
+			if(ballX >= canvas.width-ballRadius-PADDLE_WIDTH-PADDLE_DIST_FROM_WALL)//if ball is touching between right paddle and wall
+			{
+				if(ballX >= canvas.width-ballRadius)
+				{ 	
+					player1Score++;//must be BEFORE ballReset(true)
+					ballReset(true);
+				}
+				else if(ballY >= paddle2Y-3 && ballY <= paddle2Y+paddleHeight2+3)//bounces off paddle
+				{
+					ballXSpeed *= -1;
+					var deltaY = ballY-(paddle2Y+paddleHeight2/2);
+					ballYSpeed = deltaY * 0.25;
+					var mysound = new sound("hitmarker.mp3");
+					mysound.play();
+				}
+				
+			}
+
+			if(ballY >= canvas.height-ballRadius || ballY <= ballRadius)//hits top wall or bottom wall
+			{
+				ballYSpeed *= -1;
+				var mysound = new sound("hitmarker.mp3");
+				mysound.play();
+			}
+		}
+		function ballReset(isWin)
+		{
+			window.clearInterval(refreshIntervalId);
+			if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE)
+			{
+				player2Score = 0;
+				player1Score = 0;
+			}
+			 refreshIntervalId = setInterval(function(){
+
+				if(ballXSpeed < ballMaxSpeed && ballXSpeed*-1 < ballMaxSpeed)
+				{
+					if(ballXSpeed >= 0)
+					{
+						ballXSpeed++;
+					}
+					else
+					{
+						ballXSpeed--;
+					}
+				}
+
+			}, 3000);
+					//terminate when 																						   ballXSpeed reaches max
+			ballX = canvas.width/2;
+			ballY = canvas.height/2;
+			if(isWin)
+				ballXSpeed = -8;
+			else
+				ballXSpeed = 8;
+			ballYSpeed = 3;
+		}
+		function drawNet()
+		{
+			for(var i = 0;i < canvas.height;i+=40)
+			{
+				colorRect(canvas.width/2-1,i,2,20,'white');
+			}
+		}
+		function drawEverything()
+		{			
+			console.log("start background music");
+			myMusic.play();
+			//black canvas
+			colorRect(0,0,canvas.width,canvas.height,'black');
+
+			drawNet();//middle net
+
+			//player paddle
+			colorRect(PADDLE_DIST_FROM_WALL,paddle1Y,PADDLE_WIDTH,paddleHeight,'white');
+
+			//white computer paddle
+			colorRect(canvas.width-PADDLE_WIDTH-PADDLE_DIST_FROM_WALL,paddle2Y,PADDLE_WIDTH,paddleHeight2,'white');
+
+			//make white ball
+			colorCircle(ballX,ballY, ballRadius, 'white');
+			canvasContext.font = "30px Arial";
+			canvasContext.fillText(player1Score, 100,100);
+			canvasContext.fillText(player2Score, canvas.width-100,100);
+		}
+
+		function colorCircle(centerX, centerY, radius, drawColor)
+		{
+			canvasContext.fillStyle = drawColor;
+			canvasContext.beginPath();
+			canvasContext.arc(centerX, centerY, radius, 0,Math.PI * 2,true);
+			canvasContext.fill();
+		}
+
+		function colorRect(leftX,topY,width,height,drawColor)
+		{
+			canvasContext.fillStyle = drawColor;
+			canvasContext.fillRect(leftX,topY,width,height);
+		}
+		
+	</script>
+</body>
+</html>
