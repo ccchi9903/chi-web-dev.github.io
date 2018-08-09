@@ -14,21 +14,25 @@
 			color: black;	
 		}
 		body{
-			background-image: url("Grey website background.jpg");
+			background-image: url("grey website background.jpg");
 			background-size: cover;
 		}
 		canvas{
 			border: 1px solid red;
-			display: block;
+			display: inline-block;
 			padding-left: 0px;
 			padding-right: 0px;
 			margin-left: auto;
 			margin-right: auto;
 		}
+		img{
+			display: inline-block;
+		}
 	</style>
 </head>
 <body onload = "startGame()">
 	<h1>Pong Game</h1>
+	<img src="mlgFrog.gif" width = "225" height = "575">
 	<canvas id="gameCanvas" width="800" height="575"></canvas>
 
 	<script type="text/javascript">
@@ -39,19 +43,33 @@
 		var ballXSpeed = 10;//speed of ball x
 		var ballYSpeed = 6;//speed of bally
 		var ballRadius = 10;//radius of ball
-		var ballMaxSpeed = 16;
+		var ballMaxSpeed = 19;
+
 		var myMusic;
+		var loseSound;
+		var loseSound2;
+		var winSound;
+		var winSound2;
+		var winSound3;
+
+		winSound = new sound("Get rekt sound effect.mp3");
+		winSound2 = new sound("gametheme3.mp3");
+		winSound3 = new sound("winsound3.mp3");
+		loseSound = new sound("winsound3.mp3");//
+		loseSound2 = new sound("winsound3.mp3");//lazy initializing
+		myMusic = new sound("winsound3.mp3");//
 
 		var atHomeScreen = true;
+		var showingWinScreen = false;
 
 		var refreshIntervalId;
+		var refreshIntervalId2;
 
-		var paddle2MaxSpeed = 20;
 		var paddle1Y = 250;//y position or left top corner of paddle
 		var paddle2Y = 250;//left top corner of paddle 2
 		var paddleHeight = 100;//height of left paddle
 		var paddleHeight2 = 100;//height of riht paddle
-		const PADDLE_2_MAX_SPEED = 12;
+		const PADDLE_2_MAX_SPEED = 11;
 		const PADDLE_DIST_FROM_WALL = 30;
 		const PADDLE_WIDTH = 15;//width of both paddles
 
@@ -91,6 +109,8 @@
 			var framesPerSecond = 60;
 			myMusic = new sound("gametheme.mp3");
 			mysound = new sound("hitmarker.mp3");
+			loseSound = new sound("hyper distorted sad violin sound effect.mp3");
+			loseSound2 = new sound("loseTheme.mp3");
 			ballReset(false);
 			drawHomeScreen();	
 			canvas.addEventListener('mousemove',function(evt){
@@ -99,11 +119,29 @@
 			})
 			canvas.addEventListener('click',function()
 			{
+				var click = new sound("clicksound.mp3");
+				click.play();
 				if(atHomeScreen)
 				{
-					atHomeScreen = !atHomeScreen;
-					setInterval(function () {moveEverything();drawEverything();} ,1000/framesPerSecond);	
+					atHomeScreen = false;
+					ballReset(false);
+					refreshIntervalId2 = setInterval(function () {moveEverything();drawEverything();} ,1000/framesPerSecond);	
+					myMusic.play();
 				}	
+				else if(showingWinScreen)
+				{
+					showingWinScreen = !showingWinScreen;
+					refreshIntervalId2 = setInterval(function () {moveEverything();drawEverything();} ,1000/framesPerSecond);
+					loseSound2.stop();
+					loseSound.stop();
+					winSound.stop();
+					winSound2.stop();
+					winSound3.stop();
+					console.log("playing background music");
+					myMusic = new sound("gametheme.mp3");	
+					myMusic.play();
+					ballReset(false);
+				}
 			})
 
 		}
@@ -114,24 +152,77 @@
 			{
 				deltaY *= -1;
 			}
-			if(deltaY * 0.3> PADDLE_2_MAX_SPEED)
+
+			if(deltaY * 0.8> PADDLE_2_MAX_SPEED)
 			{
 				return PADDLE_2_MAX_SPEED;
 			}
 			else
 			{
-				return deltaY * 0.3;
+				return deltaY * 0.8;
 			}	
 		}
 		function computerMovement()
 		{
 			if(paddle2Y + paddleHeight2/2 > ballY)//if paddle is below ball
 			{
+				if(paddle2Y <= 28)
+				{
+					//if(ballX >= canvas.width-30)
+					return 0;
+				}
 				paddle2Y-=calculatePaddleSpeed();
 			}
 			else if(paddle2Y + paddleHeight2/2 < ballY)//if paddle is above ball
 			{
+				if(canvas.height-(paddle2Y+paddleHeight2) <= 28)
+				{
+					//if(ballX >= canvas.width-30)
+					return 0;
+				}
 				paddle2Y+=calculatePaddleSpeed();
+			}
+		}
+		function drawEndScreen(isMatchWon)
+		{
+			myMusic.stop();
+			
+			console.log("Hi " + isMatchWon);
+			window.clearInterval(refreshIntervalId2);
+			showingWinScreen = true;
+			if(isMatchWon)
+			{
+				winSound = new sound("Get rekt sound effect.mp3");
+				winSound2 = new sound("gametheme3.mp3");
+				winSound3 = new sound("winsound3.mp3");
+				//winSound2.play();
+				winSound.play();
+				winSound3.play();
+				console.log("You won!");//win screen
+				window.clearInterval(refreshIntervalId2);
+				colorRect(0,0,canvas.width,canvas.height,'black');
+				canvasContext.fillStyle = 'green';
+				canvasContext.font = "80px tahoma";
+				canvasContext.fillText('OMG YOU WON!!',100,150);
+				canvasContext.fillText('HOLY FUCKKKK!',120,250);
+				canvasContext.font = "15px Arial";
+				canvasContext.fillText("Click to play again",330,500);
+				showingWinScreen = true;
+			}
+			else if(!isMatchWon)//lost screen
+			{
+				loseSound.play();
+				loseSound2.play();
+				console.log("You lost");
+				window.clearInterval(refreshIntervalId2);
+				colorRect(0,0,canvas.width,canvas.height,'black');
+				canvasContext.fillStyle = 'green';
+				canvasContext.font = "80px tahoma";
+				canvasContext.fillText('RipXD you lost to AI',50,150);
+				canvasContext.fillText('Get rekt suckerr',100,250);
+				canvasContext.font = "15px Arial";
+				canvasContext.fillText("Click to play again",335,500);
+				showingWinScreen = true;
 			}
 		}
 		function drawHomeScreen()
@@ -140,11 +231,17 @@
 			canvasContext.fillStyle = 'green';
 			canvasContext.font = "80px tahoma";
 			canvasContext.fillText('Welcome to Pong!',80,150);
+			canvasContext.font = "30px tahoma";
+			canvasContext.fillText("Score " + WINNING_SCORE + " points before your opponent does!",110,350);
 			canvasContext.font = "15px Arial";
-			canvasContext.fillText("Click to start",350,500);
+			canvasContext.fillText("Click to start",345,500);
 		}
 		function moveEverything()
 		{
+			if(showingWinScreen)
+			{
+				return;
+			}
 			computerMovement();
 			ballX += ballXSpeed;
 			ballY += ballYSpeed;
@@ -171,6 +268,8 @@
 			{
 				if(ballX >= canvas.width-ballRadius)
 				{ 	
+					var fatality = new sound("fatality.mp3");
+					fatality.play();
 					player1Score++;//must be BEFORE ballReset(true)
 					ballReset(true);
 				}
@@ -178,7 +277,7 @@
 				{
 					ballXSpeed *= -1;
 					var deltaY = ballY-(paddle2Y+paddleHeight2/2);
-					ballYSpeed = deltaY * 0.25;
+					ballYSpeed = deltaY * 0.33;
 					var mysound = new sound("hitmarker.mp3");
 					mysound.play();
 				}
@@ -197,6 +296,15 @@
 			window.clearInterval(refreshIntervalId);
 			if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE)
 			{
+				window.clearInterval(refreshIntervalId2);
+				if(player2Score >= WINNING_SCORE)
+				{
+					drawEndScreen(false);
+				}
+				else
+				{
+					drawEndScreen(true);
+				}
 				player2Score = 0;
 				player1Score = 0;
 			}
@@ -214,14 +322,14 @@
 					}
 				}
 
-			}, 3000);
+			}, 2000);
 					//terminate when 																						   ballXSpeed reaches max
 			ballX = canvas.width/2;
 			ballY = canvas.height/2;
 			if(isWin)
-				ballXSpeed = -8;
+				ballXSpeed = -7;
 			else
-				ballXSpeed = 8;
+				ballXSpeed = 7;
 			ballYSpeed = 3;
 		}
 		function drawNet()
@@ -232,9 +340,13 @@
 			}
 		}
 		function drawEverything()
-		{			
-			console.log("start background music");
-			myMusic.play();
+		{		
+			if(showingWinScreen)
+			{
+				return;
+			}
+			console.log("drawing everything");
+			//myMusic.play();
 			//black canvas
 			colorRect(0,0,canvas.width,canvas.height,'black');
 
@@ -268,5 +380,6 @@
 		}
 		
 	</script>
+	<img src="mlgFrog.gif" width = "225" height = "575">
 </body>
 </html>
