@@ -69,7 +69,7 @@
 		var paddle2Y = 250;//left top corner of paddle 2
 		var paddleHeight = 100;//height of left paddle
 		var paddleHeight2 = 100;//height of riht paddle
-		const PADDLE_2_MAX_SPEED = 11;
+		const PADDLE_2_MAX_SPEED = 10;
 		const PADDLE_DIST_FROM_WALL = 30;
 		const PADDLE_WIDTH = 15;//width of both paddles
 
@@ -166,7 +166,7 @@
 		{
 			if(paddle2Y + paddleHeight2/2 > ballY)//if paddle is below ball
 			{
-				if(paddle2Y <= 33)
+				if(paddle2Y <= 38)
 				{
 					//if(ballX >= canvas.width-30)
 					return 0;
@@ -175,7 +175,7 @@
 			}
 			else if(paddle2Y + paddleHeight2/2 < ballY)//if paddle is above ball
 			{
-				if(canvas.height-(paddle2Y+paddleHeight2) <= 33)
+				if(canvas.height-(paddle2Y+paddleHeight2) <= 38)
 				{
 					//if(ballX >= canvas.width-30)
 					return 0;
@@ -196,6 +196,7 @@
 				winSound2 = new sound("gametheme3.mp3");
 				winSound3 = new sound("winsound3.mp3");
 				//winSound2.play();
+				loseSound2.play();
 				winSound.play();
 				winSound3.play();
 				console.log("You won!");//win screen
